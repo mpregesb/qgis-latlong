@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/lstingcalc" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
