@@ -42,3 +42,73 @@ class LatLongcalcDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+
+        self.spbLatD.valueChanged.connect(self.latDMStoDD)
+        self.spbLatM.valueChanged.connect(self.latDMStoDD)
+        self.spbLatS.valueChanged.connect(self.latDMStoDD)
+        self.cmbLatH.currentTextChanged.connect(self.latDMStoDD)
+        self.spbLngD.valueChanged.connect(self.lngDMStoDD)
+        self.spbLngM.valueChanged.connect(self.lngDMStoDD)
+        self.spbLngS.valueChanged.connect(self.lngDMStoDD)
+        self.cmbLngH.currentTextChanged.connect(self.lngDMStoDD)
+
+        self.spbLatDD.editingFinished.connect(self.latDDtoDMS)
+        self.spbLatDD_2.editingFinished.connect(self.lngDDtoDMS) # eigentlich Longitude
+
+    def latDMStoDD(self):
+        iDeg = self.spbLatD.value()
+        iMin = self.spbLatM.value()
+        iSec = self.spbLatS.value()
+        sHem = self.cmbLatH.currentText()
+
+        dDD = float(iDeg) + iMin/60 + iSec/3600
+        if sHem == "S":
+            dDD = dDD * -1
+
+        self.spbLatDD.setValue(dDD)
+
+    def lngDMStoDD(self):
+        iDeg = self.spbLngD.value()
+        iMin = self.spbLngM.value()
+        iSec = self.spbLngS.value()
+        sHem = self.cmbLngH.currentText()
+
+        dDD = float(iDeg) + iMin/60 + iSec/3600
+        if sHem == "W":
+            dDD = dDD * -1
+
+        self.spbLatDD_2.setValue(dDD)
+
+    def latDDtoDMS(self):
+        dDD = self.spbLatDD.value()
+
+        iDeg = int(dDD)
+        dMin = (dDD-iDeg) * 60
+        iMin = int(dMin)
+        dSec = (dMin-iMin) * 60
+
+        self.spbLatD.setValue(abs(iDeg))
+        self.spbLatM.setValue(abs(iMin))
+        self.spbLatS.setValue(abs(dSec))
+
+        if dDD <0:
+            self.cmbLatH.setCurrentText("S")
+        else:
+            self.cmbLatH.setCurrentText("N")
+
+    def lngDDtoDMS(self):
+        dDD = self.spbLatDD_2.value() # eigentlicgh Longitude
+
+        iDeg = int(dDD)
+        dMin = (dDD - iDeg) * 60
+        iMin = int(dMin)
+        dSec = (dMin - iMin) * 60
+
+        self.spbLngD.setValue(abs(iDeg))
+        self.spbLngM.setValue(abs(iMin))
+        self.spbLngS.setValue(abs(dSec))
+
+        if dDD < 0:
+            self.cmbLngH.setCurrentText("W")
+        else:
+            self.cmbLngH.setCurrentText("E")
